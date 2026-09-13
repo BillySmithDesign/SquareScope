@@ -1,0 +1,82 @@
+<svg
+  width="512"
+  height="512"
+  viewBox="0 0 512 512"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient
+      id="background"
+      x1="0"
+      y1="0"
+      x2="1"
+      y2="1"
+    >
+      <stop
+        offset="0%"
+        stop-color="#07101f"
+      />
+      <stop
+        offset="100%"
+        stop-color="#11152d"
+      />
+    </linearGradient>
+
+    <linearGradient
+      id="bars"
+      x1="0"
+      y1="1"
+      x2="1"
+      y2="0"
+    >
+      <stop
+        offset="0%"
+        stop-color="#315cff"
+      />
+      <stop
+        offset="48%"
+        stop-color="#35b8ff"
+      />
+      <stop
+        offset="100%"
+        stop-color="#7c3cff"
+      />
+    </linearGradient>
+  </defs>
+
+  <rect
+    x="24"
+    y="24"
+    width="464"
+    height="464"
+    rx="112"
+    fill="url(#background)"
+  />
+
+  <rect
+    x="104"
+    y="288"
+    width="72"
+    height="112"
+    rx="24"
+    fill="url(#bars)"
+  />
+
+  <rect
+    x="220"
+    y="216"
+    width="72"
+    height="184"
+    rx="24"
+    fill="url(#bars)"
+  />
+
+  <rect
+    x="336"
+    y="128"
+    width="72"
+    height="272"
+    rx="24"
+    fill="url(#bars)"
+  />
+</svg>
