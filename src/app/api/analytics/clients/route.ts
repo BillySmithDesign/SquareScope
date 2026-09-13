@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
-const BASE = "https://connect.squareup.com";
+const SQUARE_ENVIRONMENT = process.env.SQUARE_ENVIRONMENT === "production" ? "production" : "sandbox";
+
+const BASE = SQUARE_ENVIRONMENT === "production"
+  ? "https://connect.squareup.com"
+  : "https://connect.squareupsandbox.com";
 const VERSION = "2026-08-19";
 const LOCATION_ID = process.env.SQUARE_LOCATION_ID!;
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -195,7 +199,7 @@ export async function GET(request: Request) {
             ? `${customer?.given_name ?? ""} ${
                 customer?.family_name ?? ""
               }`.trim()
-            : "Historical client";
+            : "Historical customer";
 
         return {
           customerId,

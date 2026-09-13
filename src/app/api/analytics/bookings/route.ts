@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
-const BASE = "https://connect.squareup.com";
+const SQUARE_ENVIRONMENT = process.env.SQUARE_ENVIRONMENT === "production" ? "production" : "sandbox";
+
+const BASE = SQUARE_ENVIRONMENT === "production"
+  ? "https://connect.squareup.com"
+  : "https://connect.squareupsandbox.com";
 const VERSION = "2026-08-19";
 const LOCATION_ID = process.env.SQUARE_LOCATION_ID!;
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -97,7 +101,7 @@ function centsToMoney(cents: number) {
 
 function localDateKey(date: Date) {
   return new Intl.DateTimeFormat("en-CA", {
-    timeZone: process.env.BUSINESS_TIMEZONE || "UTC",
+    timeZone: process.env.BUSINESS_TIMEZONE ?? "UTC",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -106,8 +110,8 @@ function localDateKey(date: Date) {
 
 function localHour(date: Date) {
   return Number(
-    new Intl.DateTimeFormat("en-AU", {
-      timeZone: process.env.BUSINESS_TIMEZONE || "UTC",
+    new Intl.DateTimeFormat(process.env.BUSINESS_LOCALE ?? "en-US", {
+      timeZone: process.env.BUSINESS_TIMEZONE ?? "UTC",
       hour: "2-digit",
       hour12: false,
     }).format(date)
@@ -223,7 +227,7 @@ export async function GET(request: Request) {
             variationName.toLowerCase() !== "regular"
               ? variationName
               : null) ||
-            "Booked service";
+            "Booked item";
 
           serviceNames.push(serviceName);
 

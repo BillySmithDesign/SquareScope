@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
-const BASE = "https://connect.squareup.com";
+const SQUARE_ENVIRONMENT = process.env.SQUARE_ENVIRONMENT === "production" ? "production" : "sandbox";
+
+const BASE = SQUARE_ENVIRONMENT === "production"
+  ? "https://connect.squareup.com"
+  : "https://connect.squareupsandbox.com";
 const VERSION = "2026-08-19";
 const LOCATION_ID = process.env.SQUARE_LOCATION_ID!;
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -98,7 +102,7 @@ export async function GET(request: Request) {
 
     // Service analytics represents realised sales only.
     // Draft, open and cancelled orders must never contribute
-    // to revenue, service mix or historical trend metrics.
+    // to revenue, product & service mix or historical trend metrics.
     const orders = allOrders.filter(
       (order) => order.state === "COMPLETED"
     );

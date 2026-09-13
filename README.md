@@ -116,6 +116,15 @@ Then edit `.env.local`:
 
     SQUARE_ACCESS_TOKEN=YOUR_SQUARE_ACCESS_TOKEN
     SQUARE_LOCATION_ID=YOUR_SQUARE_LOCATION_ID
+    SQUARE_ENVIRONMENT=sandbox
+
+    BUSINESS_TIMEZONE=UTC
+    BUSINESS_LOCALE=en-US
+    BUSINESS_CURRENCY=USD
+
+    NEXT_PUBLIC_BUSINESS_TIMEZONE=UTC
+    NEXT_PUBLIC_BUSINESS_LOCALE=en-US
+    NEXT_PUBLIC_BUSINESS_CURRENCY=USD
 
 Never commit `.env.local`.
 
@@ -135,6 +144,21 @@ SquareScope currently expects:
 |---|---|
 | `SQUARE_ACCESS_TOKEN` | Server-side credential used to access Square APIs |
 | `SQUARE_LOCATION_ID` | Square location to analyse |
+| `SQUARE_ENVIRONMENT` | Square API environment: `sandbox` or `production` |
+| `BUSINESS_TIMEZONE` | Server-side business timezone |
+| `BUSINESS_LOCALE` | Server-side formatting locale |
+| `BUSINESS_CURRENCY` | Business currency code |
+| `NEXT_PUBLIC_BUSINESS_TIMEZONE` | Dashboard display timezone |
+| `NEXT_PUBLIC_BUSINESS_LOCALE` | Dashboard display locale |
+| `NEXT_PUBLIC_BUSINESS_CURRENCY` | Dashboard display currency |
+
+### 🌍 Environment and regional settings
+
+SquareScope defaults to the Square sandbox environment. Use `SQUARE_ENVIRONMENT=sandbox` for development and testing. Set `SQUARE_ENVIRONMENT=production` only when you are ready to connect real merchant data.
+
+SquareScope does not assume a country, currency or timezone. Configure the `BUSINESS_` and `NEXT_PUBLIC_BUSINESS_` variables for your merchant. For example, an Australian business could use `Australia/Adelaide`, `en-AU` and `AUD`.
+
+The `NEXT_PUBLIC_` settings contain display configuration only and are intentionally browser-visible. Never place a Square access token in a `NEXT_PUBLIC_` variable. On Vercel, set these variables before building or deploying because Next.js includes public environment values in the client bundle at build time.
 
 ### 🔐 Keep your token private
 
@@ -175,10 +199,11 @@ SquareScope is designed to work with Vercel.
 
 1. Fork or clone this repository.
 2. Import it into Vercel.
-3. Add `SQUARE_ACCESS_TOKEN`.
-4. Add `SQUARE_LOCATION_ID`.
-5. Deploy.
-6. Protect the dashboard before connecting real production data.
+3. Add all environment variables documented above.
+4. Start with `SQUARE_ENVIRONMENT=sandbox` while testing.
+5. Deploy and verify the dashboard.
+6. Enable authentication or Vercel Deployment Protection.
+7. Only then switch to `SQUARE_ENVIRONMENT=production` and add production Square credentials.
 
 > ⚠️ A SquareScope deployment containing customer or financial data should not be left publicly accessible.
 

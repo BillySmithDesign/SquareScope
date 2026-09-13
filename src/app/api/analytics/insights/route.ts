@@ -16,13 +16,35 @@ async function getLocalAnalytics(request: Request, endpoint: string) {
 
   const response = await fetch(`${origin}${endpoint}`, {
     cache: "no-store",
+    headers: {
+      cookie: request.headers.get("cookie") ?? "",
+      authorization: request.headers.get("authorization") ?? "",
+    },
   });
 
-  const data = await response.json();
+  const contentType = response.headers.get("content-type") ?? "";
+  const raw = await response.text();
+
+  if (!contentType.includes("application/json")) {
+    throw new Error(
+      `Analytics endpoint ${endpoint} returned ${response.status} ${response.statusText} (${contentType || "unknown content-type"}) instead of JSON`
+    );
+  }
+
+  let data: any;
+
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    throw new Error(
+      `Analytics endpoint ${endpoint} returned invalid JSON (${response.status})`
+    );
+  }
 
   if (!response.ok || !data.success) {
     throw new Error(
-      data?.error || `Analytics endpoint failed: ${endpoint}`
+      data?.error ||
+        `Analytics endpoint failed: ${endpoint} (${response.status})`
     );
   }
 
@@ -33,14 +55,24 @@ export async function GET(request: Request) {
   try {
     const started = Date.now();
 
-    const [overview, revenue, clients, services, bookings] =
+    const [overview, revenue, clients, services] =
       await Promise.all([
         getLocalAnalytics(request, "/api/analytics/overview"),
         getLocalAnalytics(request, "/api/analytics/revenue"),
         getLocalAnalytics(request, "/api/analytics/clients"),
         getLocalAnalytics(request, "/api/analytics/services"),
-        getLocalAnalytics(request, "/api/analytics/bookings"),
       ]);
+
+    const bookings = await getLocalAnalytics(
+      request,
+      "/api/analytics/bookings"
+    ).catch(() => ({
+      success: true,
+      available: false,
+      nextBookings: [],
+      forwardValue: 0,
+      forwardBookings: 0,
+    }));
 
     const insights: Insight[] = [];
 
@@ -86,7 +118,7 @@ export async function GET(request: Request) {
 
     // Work in the configured business timezone.
     const today = new Intl.DateTimeFormat("en-CA", {
-      timeZone: process.env.BUSINESS_TIMEZONE || "UTC",
+      timeZone: process.env.BUSINESS_TIMEZONE ?? "UTC",
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -137,20 +169,20 @@ export async function GET(request: Request) {
             ? `$${Math.round(
                 monthRevenue
               ).toLocaleString(
-                "en-AU"
+                process.env.BUSINESS_LOCALE ?? "en-US"
               )} has been collected so far this month, with another $${Math.round(
                 remainingBookedValue
               ).toLocaleString(
-                "en-AU"
+                process.env.BUSINESS_LOCALE ?? "en-US"
               )} currently accepted in the remaining booking calendar. The working month-end outlook is approximately $${Math.round(
                 forecast
-              ).toLocaleString("en-AU")}.`
+              ).toLocaleString(process.env.BUSINESS_LOCALE ?? "en-US")}.`
             : `Based on the current sales pace, the month is tracking toward approximately $${Math.round(
                 runRateForecast
-              ).toLocaleString("en-AU")}.`,
+              ).toLocaleString(process.env.BUSINESS_LOCALE ?? "en-US")}.`,
         metric: `$${Math.round(
           forecast
-        ).toLocaleString("en-AU")}`,
+        ).toLocaleString(process.env.BUSINESS_LOCALE ?? "en-US")}`,
         source: "Revenue + Bookings",
       });
     }
@@ -180,7 +212,7 @@ export async function GET(request: Request) {
         type: "positive",
         priority: "medium",
         title: `${strongest.category} is gaining momentum`,
-        message: `${strongest.category} completed service sales are up ${Number(
+        message: `${strongest.category} completed product & service sales are up ${Number(
           strongest.change
         ).toFixed(
           1
@@ -211,7 +243,7 @@ export async function GET(request: Request) {
         type: "warning",
         priority: "medium",
         title: `${weakest.category} has softened`,
-        message: `${weakest.category} completed service sales are ${Math.abs(
+        message: `${weakest.category} completed product & service sales are ${Math.abs(
           Number(weakest.change)
         ).toFixed(
           1
@@ -233,7 +265,7 @@ export async function GET(request: Request) {
           largestCategory.share
         ).toFixed(
           1
-        )}% of completed service sales, making it a major driver of the service mix.`,
+        )}% of completed product & service sales, making it a major driver of the product & service mix.`,
         metric: `${Number(largestCategory.share).toFixed(1)}%`,
         source: "Services",
       });
@@ -287,7 +319,7 @@ export async function GET(request: Request) {
         type: "info",
         priority: "low",
         title: "Top clients contribute significant value",
-        message: `The top 10 historical clients account for ${concentration.toFixed(
+        message: `The top 10 historical customers account for ${concentration.toFixed(
           1
         )}% of payment-linked client revenue.`,
         metric: `${concentration.toFixed(1)}%`,
@@ -316,11 +348,11 @@ export async function GET(request: Request) {
         message: `${forwardBookings} accepted future appointments currently represent approximately $${Math.round(
           forwardValue
         ).toLocaleString(
-          "en-AU"
+          process.env.BUSINESS_LOCALE ?? "en-US"
         )} in estimated booked value across ${forwardHours.toFixed(
           1
         )} booked hours.`,
-        metric: `$${Math.round(forwardValue).toLocaleString("en-AU")}`,
+        metric: `$${Math.round(forwardValue).toLocaleString(process.env.BUSINESS_LOCALE ?? "en-US")}`,
         source: "Bookings",
       });
     }
@@ -330,7 +362,7 @@ export async function GET(request: Request) {
     if (busiest) {
       const busyDate = new Date(
         `${busiest.date}T12:00:00`
-      ).toLocaleDateString("en-AU", {
+      ).toLocaleDateString(process.env.BUSINESS_LOCALE ?? "en-US", {
         weekday: "long",
         day: "numeric",
         month: "long",
@@ -347,7 +379,7 @@ export async function GET(request: Request) {
           busiest.bookings
         } appointments, representing approximately $${Math.round(
           busiest.estimatedValue
-        ).toLocaleString("en-AU")} in estimated value.`,
+        ).toLocaleString(process.env.BUSINESS_LOCALE ?? "en-US")} in estimated value.`,
         metric: `${Number(busiest.bookedHours).toFixed(1)}h`,
         source: "Bookings",
       });

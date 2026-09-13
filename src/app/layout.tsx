@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     template: "%s · SquareScope",
   },
   description:
-    "Private business intelligence dashboard for Your Business.",
+    "Open-source business intelligence and analytics for Square merchants.",
   applicationName: "SquareScope",
   robots: {
     index: false,
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "SquareScope",
     description:
-      "Sales, client, service and booking intelligence for Your Business.",
+      "Sales, customer, product, service and booking intelligence for Square merchants.",
     type: "website",
     siteName: "SquareScope",
   },
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SquareScope",
     description:
-      "Sales, client, service and booking intelligence for Your Business.",
+      "Sales, customer, product, service and booking intelligence for Square merchants.",
   },
 };
 

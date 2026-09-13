@@ -71,15 +71,24 @@ type Analytics = {
   }[];
 };
 
-const money = new Intl.NumberFormat("en-AU", {
+const BUSINESS_LOCALE =
+  process.env.NEXT_PUBLIC_BUSINESS_LOCALE || "en-US";
+
+const BUSINESS_CURRENCY =
+  process.env.NEXT_PUBLIC_BUSINESS_CURRENCY || "USD";
+
+const BUSINESS_TIMEZONE =
+  process.env.NEXT_PUBLIC_BUSINESS_TIMEZONE || "UTC";
+
+const money = new Intl.NumberFormat(BUSINESS_LOCALE, {
   style: "currency",
-  currency: "AUD",
+  currency: BUSINESS_CURRENCY,
   maximumFractionDigits: 0,
 });
 
-const compactMoney = new Intl.NumberFormat("en-AU", {
+const compactMoney = new Intl.NumberFormat(BUSINESS_LOCALE, {
   style: "currency",
-  currency: "AUD",
+  currency: BUSINESS_CURRENCY,
   notation: "compact",
   maximumFractionDigits: 1,
 });
@@ -218,7 +227,7 @@ function RevenueView() {
         row.year,
         row.monthNumber - 1,
         1
-      ).toLocaleDateString("en-AU", {
+      ).toLocaleDateString(BUSINESS_LOCALE, {
         month: "short",
         year: "2-digit",
       }),
@@ -405,7 +414,7 @@ function RevenueView() {
                 ? new Date(
                     revenue.bestMonth.year,
                     revenue.bestMonth.monthNumber - 1
-                  ).toLocaleDateString("en-AU", {
+                  ).toLocaleDateString(BUSINESS_LOCALE, {
                     month: "long",
                     year: "numeric",
                   })
@@ -424,7 +433,7 @@ function RevenueView() {
               {revenue.bestDay
                 ? new Date(
                     `${revenue.bestDay.date}T12:00:00`
-                  ).toLocaleDateString("en-AU", {
+                  ).toLocaleDateString(BUSINESS_LOCALE, {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
@@ -648,7 +657,7 @@ function CustomersView() {
     return clients.acquisition.slice(-18).map((row) => ({
       ...row,
       label: new Date(`${row.month}-01T12:00:00`).toLocaleDateString(
-        "en-AU",
+        BUSINESS_LOCALE,
         {
           month: "short",
           year: "2-digit",
@@ -684,7 +693,7 @@ function CustomersView() {
     <>
       <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm text-black/40">Client intelligence</p>
+          <p className="text-sm text-black/40">Customer intelligence</p>
           <h2 className="mt-1 text-3xl font-semibold tracking-[-0.05em]">
             Customers
           </h2>
@@ -697,21 +706,21 @@ function CustomersView() {
 
       <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Active clients"
+          title="Active customers"
           value={String(clients.summary.activeCustomers)}
           detail="Seen within the last 90 days"
           icon={Users}
         />
 
         <StatCard
-          title="Repeat client rate"
+          title="Repeat customer rate"
           value={`${clients.summary.currentRepeatRate}%`}
           detail={`${clients.summary.currentRepeatCustomers} current repeat customers`}
           icon={Sparkles}
         />
 
         <StatCard
-          title="Average client value"
+          title="Average customer value"
           value={money.format(clients.summary.averageLifetimeValue)}
           detail={`${clients.summary.averageTransactions} transactions per client`}
           icon={CircleDollarSign}
@@ -782,7 +791,7 @@ function CustomersView() {
                     <td className="py-4 pr-4">
                       <div className="flex items-center gap-3">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f3f1ed] text-xs font-semibold">
-                          {client.name === "Historical client"
+                          {client.name === "Historical customer"
                             ? "H"
                             : client.name
                                 .split(" ")
@@ -820,7 +829,7 @@ function CustomersView() {
 
                     <td className="py-4 text-sm text-black/55">
                       {new Date(client.lastVisit).toLocaleDateString(
-                        "en-AU",
+                        BUSINESS_LOCALE,
                         {
                           day: "numeric",
                           month: "short",
@@ -1112,7 +1121,7 @@ function ServicesView() {
     <>
       <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm text-black/40">Service performance</p>
+          <p className="text-sm text-black/40">Product & service performance</p>
           <h2 className="mt-1 text-3xl font-semibold tracking-[-0.05em]">
             Services
           </h2>
@@ -1125,7 +1134,7 @@ function ServicesView() {
 
       <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Completed service sales"
+          title="Completed product & service sales"
           value={compactMoney.format(services.summary.totalRevenue)}
           detail={`${services.summary.units.toLocaleString()} completed line items`}
           icon={CircleDollarSign}
@@ -1136,7 +1145,7 @@ function ServicesView() {
           value={topCategory?.category ?? "—"}
           detail={
             topCategory
-              ? `${topCategory.share}% of completed service sales`
+              ? `${topCategory.share}% of completed product & service sales`
               : ""
           }
           icon={Scissors}
@@ -1164,9 +1173,9 @@ function ServicesView() {
       <section className="mt-4 grid gap-4 xl:grid-cols-[1.2fr_.8fr]">
         <div className="rounded-3xl border border-black/[0.06] bg-white p-6">
           <div>
-            <p className="text-sm font-medium">Service mix</p>
+            <p className="text-sm font-medium">Product & service mix</p>
             <p className="mt-1 text-xs text-black/40">
-              Completed service sales by category
+              Completed product & service sales by category
             </p>
           </div>
 
@@ -1271,7 +1280,7 @@ function ServicesView() {
       <section className="mt-4 rounded-3xl border border-black/[0.06] bg-white p-6">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <p className="text-sm font-medium">Service leaderboard</p>
+            <p className="text-sm font-medium">Product & service leaderboard</p>
             <p className="mt-1 text-xs text-black/40">
               Completed order line performance
             </p>
@@ -1407,6 +1416,7 @@ type BookingAnalytics = {
 
 function BookingsView() {
   const [bookings, setBookings] = useState<BookingAnalytics | null>(null);
+  const [bookingsUnavailable, setBookingsUnavailable] = useState(false);
   const [bookingRange, setBookingRange] = useState<"7" | "30">("30");
 
   useEffect(() => {
@@ -1416,8 +1426,22 @@ function BookingsView() {
         if (!json.success) throw new Error(json.error);
         setBookings(json);
       })
-      .catch(console.error);
+      .catch(() => setBookingsUnavailable(true));
   }, []);
+
+  if (bookingsUnavailable) {
+    return (
+      <div className="flex min-h-[70vh] items-center justify-center px-6">
+        <div className="max-w-md text-center">
+          <CalendarDays size={28} className="mx-auto text-black/30" />
+          <h2 className="mt-4 text-lg font-semibold">Bookings unavailable</h2>
+          <p className="mt-2 text-sm leading-6 text-black/50">
+            Square Bookings is not available for this account or the connected credentials do not include access to booking data. Your other SquareScope analytics are unaffected.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!bookings) {
     return (
@@ -1454,16 +1478,16 @@ function BookingsView() {
   );
 
   const formatTime = (iso: string) =>
-    new Intl.DateTimeFormat("en-AU", {
-      timeZone: process.env.BUSINESS_TIMEZONE || "UTC",
+    new Intl.DateTimeFormat(BUSINESS_LOCALE, {
+      timeZone: BUSINESS_TIMEZONE,
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
     }).format(new Date(iso));
 
   const formatDate = (iso: string) =>
-    new Intl.DateTimeFormat("en-AU", {
-      timeZone: process.env.BUSINESS_TIMEZONE || "UTC",
+    new Intl.DateTimeFormat(BUSINESS_LOCALE, {
+      timeZone: BUSINESS_TIMEZONE,
       weekday: "short",
       day: "numeric",
       month: "short",
@@ -1518,7 +1542,7 @@ function BookingsView() {
                 )
               : bookings.summary.estimatedNext30Value
           )}
-          detail="Estimated from booked services"
+          detail="Estimated from booked items"
           icon={CircleDollarSign}
         />
 
@@ -1639,7 +1663,7 @@ function BookingsView() {
               <p className="mt-2 text-lg font-semibold">
                 {new Date(
                   `${bookings.busiestFutureDay.date}T12:00:00`
-                ).toLocaleDateString("en-AU", {
+                ).toLocaleDateString(BUSINESS_LOCALE, {
                   weekday: "long",
                   day: "numeric",
                   month: "long",
@@ -1676,7 +1700,7 @@ function BookingsView() {
                   <p className="text-sm font-semibold">
                     {new Date(
                       `${day.date}T12:00:00`
-                    ).toLocaleDateString("en-AU", {
+                    ).toLocaleDateString(BUSINESS_LOCALE, {
                       weekday: "short",
                       day: "numeric",
                       month: "short",
@@ -1719,7 +1743,7 @@ function BookingsView() {
 
       <div className="mt-4 rounded-2xl border border-black/[0.05] bg-white/50 px-5 py-4 text-xs leading-5 text-black/40">
         Forward value is an estimate derived from the current Square catalog
-        price attached to each booked service variation. It is not recognised
+        price attached to each booked item variation. It is not recognised
         revenue and may differ from the final amount charged.
       </div>
     </>
@@ -1825,7 +1849,7 @@ function InsightsView() {
             </h3>
 
             <p className="mt-5 max-w-xl text-sm leading-6 text-white/45">
-              Your Business is tracking toward{" "}
+              Your business is tracking toward{" "}
               {money.format(data.headline.monthForecast)} for the
               current month, with a current repeat-customer rate of{" "}
               {data.headline.repeatRate.toFixed(1)}%.
@@ -1985,7 +2009,7 @@ export default function Home() {
 
       return {
         ...item,
-        label: date.toLocaleDateString("en-AU", {
+        label: date.toLocaleDateString(BUSINESS_LOCALE, {
           month: "short",
           year: "2-digit",
         }),
@@ -2172,7 +2196,7 @@ export default function Home() {
               value={compactMoney.format(data.totals.grossRevenue)}
               detail={`Since ${new Date(
                 data.dataRange.firstPayment ?? ""
-              ).toLocaleDateString("en-AU", {
+              ).toLocaleDateString(BUSINESS_LOCALE, {
                 month: "short",
                 year: "numeric",
               })}`}
@@ -2306,7 +2330,7 @@ export default function Home() {
           <section className="mt-4 grid gap-4 xl:grid-cols-2">
             <div className="rounded-3xl border border-black/[0.06] bg-white p-6">
               <div>
-                <p className="text-sm font-medium">Top services</p>
+                <p className="text-sm font-medium">Top products & services</p>
                 <p className="mt-1 text-xs text-black/40">
                   Ranked by completed sales
                 </p>

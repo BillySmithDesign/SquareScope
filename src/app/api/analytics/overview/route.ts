@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
-const BASE = "https://connect.squareup.com";
+const SQUARE_ENVIRONMENT = process.env.SQUARE_ENVIRONMENT === "production" ? "production" : "sandbox";
+
+const BASE = SQUARE_ENVIRONMENT === "production"
+  ? "https://connect.squareup.com"
+  : "https://connect.squareupsandbox.com";
 const VERSION = "2026-08-19";
 const LOCATION_ID = process.env.SQUARE_LOCATION_ID!;
 
@@ -302,7 +306,7 @@ export async function GET(request: Request) {
       }
     >();
 
-    for (const order of orders) {
+    for (const order of orders.filter((order) => order.state === "COMPLETED")) {
       for (const item of order.line_items ?? []) {
         const name = item.name || "Unknown item";
         const quantity = Number(item.quantity ?? 1);
