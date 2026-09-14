@@ -1,0 +1,35 @@
+.summary { margin-top: 20px; min-width: 0; color: #292722; }
+.metric { font-size: 28px; line-height: 1.2; font-weight: 650; letter-spacing: -.04em; }
+.context, .observation, .comparison { font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.context { color: #68645d; }
+.comparison { margin: 8px 0 16px; font-weight: 550; }
+.bars { display: grid; gap: 12px; margin-top: 12px; list-style: none; padding: 0; }
+.bars li > div:first-child { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; }
+.bars span { overflow-wrap: anywhere; }
+.bars strong { flex-shrink: 0; font-weight: 600; }
+.track { height: 5px; margin-top: 6px; background: #efede8; border-radius: 9px; overflow: hidden; }
+.track span { display: block; height: 100%; background: #77715f; border-radius: inherit; }
+.observation { margin: 16px 0 4px; }
+.full, .close { min-height: 44px; border: 1px solid #ddd8ce; border-radius: 14px; background: #f6f4ef; font-size: 13px; font-weight: 600; padding: 10px 14px; cursor: pointer; }
+.full { display: flex; justify-content: space-between; width: 100%; margin-top: 16px; }
+.full:focus-visible, .close:focus-visible, .table summary:focus-visible { outline: 3px solid #84724f; outline-offset: 3px; }
+.dialog { position: fixed; inset: 0; margin: 0; width: 100%; max-width: none; height: 100dvh; max-height: none; padding: 0; border: 0; background: #faf9f6; color: #292722; overflow: hidden; }
+.dialog[open] { display: flex; flex-direction: column; }
+.dialog::backdrop { background: #17171780; }
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 14px max(16px, env(safe-area-inset-left)); border-bottom: 1px solid #e5e1d8; flex-shrink: 0; }
+.header h2 { font-size: 18px; font-weight: 650; }
+.header p { font-size: 12px; margin-top: 4px; color: #68645d; }
+.close { flex-shrink: 0; }
+.detailBody { overflow: auto; overscroll-behavior: contain; min-height: 0; padding: 12px max(12px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+.hint { font-size: 12px; line-height: 1.5; color: #68645d; margin: 0 4px 12px; }
+.chart { width: 100%; min-width: 0; height: max(320px, 56dvh); }
+.table { margin-top: 16px; font-size: 13px; }
+.table summary { cursor: pointer; min-height: 44px; padding: 12px 4px; }
+.table table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+.table caption { text-align: left; padding: 12px 4px; }
+.table th, .table td { padding: 10px 4px; border-bottom: 1px solid #e5e1d8; text-align: left; overflow-wrap: anywhere; }
+.table td:last-child, .table th:last-child { text-align: right; }
+@media (orientation: landscape) and (max-height: 500px) {
+  .chart { height: max(230px, 62dvh); }
+  .header { padding-top: max(8px, env(safe-area-inset-top)); padding-bottom: 8px; }
+}
