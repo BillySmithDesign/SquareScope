@@ -24,3 +24,176 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/*
+ * SquareScope responsive shell
+ *
+ * The desktop dashboard keeps its original fixed sidebar. On phones and
+ * tablets the same navigation becomes a compact, sticky horizontal tab bar,
+ * keeping every dashboard view reachable without a drawer or hidden menu.
+ */
+@media (max-width: 1023px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Turn the desktop flex shell into a vertical mobile shell. */
+  body > div > div.mx-auto.flex {
+    display: block;
+    width: 100%;
+  }
+
+  /* The Tailwind `hidden lg:block` sidebar becomes the mobile app header. */
+  body > div > div > aside.hidden {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: block;
+    width: 100%;
+    padding: 12px 16px 10px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    background: rgba(246, 245, 242, 0.94);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(160%);
+  }
+
+  body > div > div > aside.hidden > div:first-child {
+    padding: 0 4px;
+  }
+
+  body > div > div > aside.hidden > div:first-child p {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+  }
+
+  body > div > div > aside.hidden > div:first-child h1 {
+    margin-top: 0;
+    font-size: 17px;
+  }
+
+  body > div > div > aside.hidden nav {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 0 0 2px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body > div > div > aside.hidden nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  body > div > div > aside.hidden nav button {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 42px;
+    gap: 7px;
+    padding: 9px 12px;
+    white-space: nowrap;
+  }
+
+  /* Connection card is useful on desktop but wastes the mobile viewport. */
+  body > div > div > aside.hidden > div:last-child {
+    display: none;
+  }
+
+  /* Main content should never force the viewport wider than the device. */
+  body > div > div > main {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 639px) {
+  body > div > div > aside.hidden {
+    padding-inline: 12px;
+  }
+
+  body > div > div > main {
+    padding: 20px 14px 32px;
+  }
+
+  /* Preserve the visual hierarchy without desktop-sized headings/cards. */
+  main h2 {
+    font-size: 1.75rem;
+    line-height: 1.12;
+  }
+
+  main h3 {
+    overflow-wrap: anywhere;
+  }
+
+  main section,
+  main header,
+  main footer,
+  main > div {
+    min-width: 0;
+  }
+
+  main .rounded-3xl,
+  main .rounded-\[32px\] {
+    border-radius: 22px;
+  }
+
+  /* Tighten dashboard cards while retaining comfortable touch spacing. */
+  main .rounded-3xl.p-6 {
+    padding: 18px;
+  }
+
+  main .rounded-3xl.p-5 {
+    padding: 18px;
+  }
+
+  /* Recharts SVGs stay inside the card on narrow devices. */
+  main .recharts-responsive-container,
+  main .recharts-wrapper,
+  main svg.recharts-surface {
+    max-width: 100% !important;
+  }
+
+  /* Keep long business/customer/service values from widening cards. */
+  main p,
+  main span {
+    overflow-wrap: anywhere;
+  }
+
+  /* Segmented controls remain usable instead of overflowing their header. */
+  main header > div:last-child {
+    max-width: 100%;
+  }
+
+  main header > div:last-child button {
+    min-height: 40px;
+  }
+
+  /* Insight metric rows can wrap cleanly on 320–430px devices. */
+  main .flex.items-start.justify-between {
+    min-width: 0;
+  }
+}
+
+/* Extra-small phones: optimise the nav for 320–374px without hiding views. */
+@media (max-width: 374px) {
+  body > div > div > aside.hidden nav button {
+    padding-inline: 10px;
+    font-size: 12px;
+  }
+
+  body > div > div > aside.hidden nav button svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  body > div > div > main {
+    padding-inline: 10px;
+  }
+
+  main h2 {
+    font-size: 1.55rem;
+  }
+}
