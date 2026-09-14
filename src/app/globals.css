@@ -25,175 +25,248 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/*
- * SquareScope responsive shell
- *
- * The desktop dashboard keeps its original fixed sidebar. On phones and
- * tablets the same navigation becomes a compact, sticky horizontal tab bar,
- * keeping every dashboard view reachable without a drawer or hidden menu.
- */
+/* SquareScope mobile app experience. Desktop remains intentionally unchanged. */
 @media (max-width: 1023px) {
   body {
     overflow-x: hidden;
+    background: #f6f5f2;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  /* Turn the desktop flex shell into a vertical mobile shell. */
   body > div > div.mx-auto.flex {
     display: block;
     width: 100%;
   }
 
-  /* The Tailwind `hidden lg:block` sidebar becomes the mobile app header. */
   body > div > div > aside.hidden {
-    position: sticky;
-    top: 0;
-    z-index: 40;
+    position: fixed;
+    inset: auto 12px max(12px, env(safe-area-inset-bottom)) 12px;
+    z-index: 50;
     display: block;
-    width: 100%;
-    padding: 12px 16px 10px;
-    border-right: 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    background: rgba(246, 245, 242, 0.94);
-    -webkit-backdrop-filter: blur(18px) saturate(160%);
-    backdrop-filter: blur(18px) saturate(160%);
-  }
-
-  body > div > div > aside.hidden > div:first-child {
-    padding: 0 4px;
-  }
-
-  body > div > div > aside.hidden > div:first-child p {
-    font-size: 9px;
-    letter-spacing: 0.22em;
-  }
-
-  body > div > div > aside.hidden > div:first-child h1 {
-    margin-top: 0;
-    font-size: 17px;
-  }
-
-  body > div > div > aside.hidden nav {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-    padding: 0 0 2px;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  body > div > div > aside.hidden nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  body > div > div > aside.hidden nav button {
-    flex: 0 0 auto;
     width: auto;
-    min-height: 42px;
-    gap: 7px;
-    padding: 9px 12px;
-    white-space: nowrap;
+    padding: 7px;
+    border: 1px solid rgba(255,255,255,.72);
+    border-radius: 24px;
+    background: rgba(20,20,20,.88);
+    box-shadow: 0 18px 50px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.12), inset 0 1px rgba(255,255,255,.12);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
   }
 
-  /* Connection card is useful on desktop but wastes the mobile viewport. */
+  body > div > div > aside.hidden > div:first-child,
   body > div > div > aside.hidden > div:last-child {
     display: none;
   }
 
-  /* Main content should never force the viewport wider than the device. */
+  body > div > div > aside.hidden nav {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 3px;
+    margin: 0;
+    font-size: 0;
+  }
+
+  body > div > div > aside.hidden nav button {
+    display: flex;
+    min-width: 0;
+    min-height: 54px;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 2px;
+    border-radius: 18px;
+    color: rgba(255,255,255,.52);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    line-height: 1;
+  }
+
+  body > div > div > aside.hidden nav button.bg-black {
+    background: rgba(255,255,255,.14);
+    color: white;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+  }
+
+  body > div > div > aside.hidden nav button svg {
+    width: 19px;
+    height: 19px;
+    stroke-width: 1.8;
+  }
+
   body > div > div > main {
     width: 100%;
     min-width: 0;
     overflow: hidden;
+    padding-bottom: calc(104px + env(safe-area-inset-bottom));
   }
 }
 
 @media (max-width: 639px) {
-  body > div > div > aside.hidden {
-    padding-inline: 12px;
-  }
-
   body > div > div > main {
-    padding: 20px 14px 32px;
+    padding: max(22px, env(safe-area-inset-top)) 14px calc(108px + env(safe-area-inset-bottom));
   }
 
-  /* Preserve the visual hierarchy without desktop-sized headings/cards. */
+  main > header {
+    position: relative;
+    gap: 14px;
+    margin-bottom: 2px;
+  }
+
+  main > header::before {
+    content: "SQUARESCOPE";
+    display: block;
+    position: absolute;
+    top: -13px;
+    right: 1px;
+    color: rgba(0,0,0,.22);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .2em;
+  }
+
   main h2 {
-    font-size: 1.75rem;
-    line-height: 1.12;
+    max-width: 92vw;
+    font-size: 1.85rem !important;
+    line-height: 1.04;
+    letter-spacing: -.055em;
   }
 
-  main h3 {
-    overflow-wrap: anywhere;
+  main h3 { overflow-wrap: anywhere; }
+  main section, main header, main footer, main > div { min-width: 0; }
+  main p, main span { overflow-wrap: anywhere; }
+
+  /* Native-app style compact status/control pills. */
+  main > header > div:last-child {
+    align-self: flex-start;
+    max-width: 100%;
+    border-color: rgba(0,0,0,.05);
+    background: rgba(255,255,255,.72);
+    box-shadow: 0 5px 18px rgba(0,0,0,.04);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
   }
 
-  main section,
-  main header,
-  main footer,
-  main > div {
-    min-width: 0;
+  main > header > div:last-child button { min-height: 40px; }
+
+  /* KPI cockpit: four metrics visible as a dense 2x2 mobile dashboard. */
+  main > header + section.mt-8.grid {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 10px;
+    margin-top: 20px;
   }
 
+  main > header + section.mt-8.grid > div {
+    min-height: 158px;
+    padding: 15px;
+    border-color: rgba(0,0,0,.045);
+    border-radius: 24px;
+    box-shadow: 0 8px 28px rgba(28,25,20,.045);
+  }
+
+  main > header + section.mt-8.grid > div > div:first-child > div:first-child {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+  }
+
+  main > header + section.mt-8.grid > div > div.mt-6 { margin-top: 18px; }
+  main > header + section.mt-8.grid > div p.text-3xl { font-size: 1.55rem; }
+  main > header + section.mt-8.grid > div p.text-sm { font-size: 11px; }
+  main > header + section.mt-8.grid > div p.text-xs { font-size: 10px; line-height: 1.35; }
+
+  /* Premium card language: softer radius, subtle elevation, less boxed-in. */
   main .rounded-3xl,
   main .rounded-\[32px\] {
-    border-radius: 22px;
+    border-radius: 26px;
   }
 
-  /* Tighten dashboard cards while retaining comfortable touch spacing. */
-  main .rounded-3xl.p-6 {
-    padding: 18px;
+  main .rounded-3xl.p-6,
+  main .rounded-3xl.p-5 { padding: 18px; }
+
+  main section.mt-4 > .rounded-3xl,
+  main section.mt-4.rounded-3xl,
+  main section.mt-8 > .rounded-3xl {
+    box-shadow: 0 8px 32px rgba(28,25,20,.04);
   }
 
-  main .rounded-3xl.p-5 {
-    padding: 18px;
-  }
-
-  /* Recharts SVGs stay inside the card on narrow devices. */
+  /* Charts get more plot area and visually disappear into their card. */
   main .recharts-responsive-container,
   main .recharts-wrapper,
-  main svg.recharts-surface {
-    max-width: 100% !important;
+  main svg.recharts-surface { max-width: 100% !important; }
+
+  main .recharts-cartesian-axis-tick-value { font-size: 9px; }
+
+  /* Dark intelligence/record cards become visual hero moments. */
+  main .bg-\[\#171717\] {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg,#191919 0%,#0c0c0c 100%);
+    box-shadow: 0 18px 42px rgba(0,0,0,.16);
   }
 
-  /* Keep long business/customer/service values from widening cards. */
-  main p,
-  main span {
-    overflow-wrap: anywhere;
+  main .bg-\[\#171717\]::after {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    top: -105px;
+    right: -70px;
+    border-radius: 999px;
+    background: radial-gradient(circle,rgba(255,255,255,.11),rgba(255,255,255,0) 68%);
+    pointer-events: none;
   }
 
-  /* Segmented controls remain usable instead of overflowing their header. */
-  main header > div:last-child {
-    max-width: 100%;
+  /* Appointment/customer rows become touch-friendly content blocks. */
+  main .border-b.py-4,
+  main .border-b.py-3\.5 {
+    min-height: 64px;
   }
 
-  main header > div:last-child button {
-    min-height: 40px;
-  }
+  /* Insight cards read like a feed rather than a desktop grid squeezed down. */
+  main section.mt-8.grid.gap-4.xl\:grid-cols-2 { gap: 10px; }
+  main section.mt-8.grid.gap-4.xl\:grid-cols-2 > div { padding: 18px; }
 
-  /* Insight metric rows can wrap cleanly on 320–430px devices. */
-  main .flex.items-start.justify-between {
-    min-width: 0;
-  }
+  /* Smooth, intentional interaction feedback. */
+  main button,
+  aside button { touch-action: manipulation; }
+
+  main button:active,
+  aside button:active { transform: scale(.97); }
+
+  main button,
+  aside button { transition: transform .14s ease, background-color .18s ease, color .18s ease; }
+
+  footer { padding-bottom: 8px; }
 }
 
-/* Extra-small phones: optimise the nav for 320–374px without hiding views. */
 @media (max-width: 374px) {
+  body > div > div > aside.hidden {
+    inset-inline: 8px;
+    padding: 5px;
+    border-radius: 21px;
+  }
+
   body > div > div > aside.hidden nav button {
-    padding-inline: 10px;
-    font-size: 12px;
+    min-height: 50px;
+    font-size: 8px;
   }
 
   body > div > div > aside.hidden nav button svg {
-    width: 14px;
-    height: 14px;
+    width: 17px;
+    height: 17px;
   }
 
-  body > div > div > main {
-    padding-inline: 10px;
-  }
+  body > div > div > main { padding-inline: 10px; }
+  main h2 { font-size: 1.65rem !important; }
 
-  main h2 {
-    font-size: 1.55rem;
-  }
+  main > header + section.mt-8.grid { gap: 8px; }
+  main > header + section.mt-8.grid > div { min-height: 150px; padding: 13px; }
+  main > header + section.mt-8.grid > div p.text-3xl { font-size: 1.38rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main button,
+  aside button { transition: none; }
 }
